@@ -15,6 +15,7 @@ ALLOWED_HOSTS = ['*']
 
 # Application definition
 
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -22,10 +23,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'qr',
-    'qrcode'
+    'ckeditor',
+    'ckeditor_uploader',
+    'qrcode',
+    'widget_tweaks',
+    'restaurant',
 ]
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -105,4 +108,16 @@ STATICFILES_DIRS = BASE_DIR / 'assets',
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+CKEDITOR_FILENAME_GENERATOR = 'utils.get_filename'
+CKEDITOR_UPLOAD_PATH = 'uploads/'
 
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+        'height': 300,
+        'width': 1080,
+
+    }
+}
+
+MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
