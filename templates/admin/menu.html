@@ -9,14 +9,14 @@
 
 {% endblock %}
 {% block content %}
-     <div class="w-100 text-center py-2" style="background-color: #435d7d; position:relative; top:-20px;">
-         <h3 class="text-white d-flex justify-content-start ml-3 rounded">Add <b>&nbsp;new menu</b></h3>
-        </div>
+    <div class="w-100 text-center pb-2 pt-3 pl-2" style="background-color: #435d7d; position:relative; top:-20px;">
+        <h3 class="text-white d-flex justify-content-start ml-3 rounded">Add <b>&nbsp;new menu</b></h3>
+    </div>
     <div class="container ">
         <div class="d-flex justify-content-center w-100">
             {% if messages %}
                 {% for i in messages %}
-                    <div class="alert alert-success alert-dismissible fade show position-absolute" role="alert" >
+                    <div class="alert alert-success alert-dismissible fade show position-relative" role="alert">
                         <strong>Ok!</strong> {{ i }}
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
@@ -29,9 +29,10 @@
             {% csrf_token %}
             <div class="m-auto row">
                 <div class="col-6 mb-3">
-                    <label class="font-weight-bold">Restaurant:</label>
+                    <label class="font-weight-bold text-dark">Restaurant:</label>
                     <div class="input-group mb-3">
-                        <select class="border-primary custom-select custom-select-lg mr-sm-2" name='restaurant'>
+                        <select class="border-primary custom-select custom-select-lg mr-sm-2" name='restaurant'
+                                style="color: #1b1b1b">
                             {% if restaurant %}
                                 {% for res in restaurant %}
                                     <option {% if forloop.first %}selected{% endif %}
@@ -44,9 +45,10 @@
                     </div>
                 </div>
                 <div class="col-6 mb-3">
-                    <label class="font-weight-bold">Category:</label>
+                    <label class="font-weight-bold text-dark">Category:</label>
                     <div class="input-group mb-3">
-                        <select class="border-primary custom-select custom-select-lg mr-sm-2" name='category'>
+                        <select class="border-primary custom-select custom-select-lg mr-sm-2" name='category'
+                                style="color: #1b1b1b">
                             {% if category %}
                                 {% for cat in category %}
                                     <option {% if forloop.first %}selected{% endif %}
@@ -59,45 +61,52 @@
                     </div>
                 </div>
                 <div class="col-6 mb-3">
-                    <label class="font-weight-bold">Name:</label>
+                    <label class="font-weight-bold text-dark">Name:</label>
                     <div class="input-group input-group-lg ">
-                        <input type="text" class="border-primary form-control" aria-label="Sizing example input"
+                        <input type="text" class="border-primary form-control" style="color: #1b1b1b" aria-label="Sizing example input"
                                aria-describedby="inputGroup-sizing-lg" name="name" required>
                     </div>
                 </div>
                 <div class="col-6 mb-3">
-                    <label class="font-weight-bold">Image:</label>
-                    <div class="input-group-lg mb-3">
-                        <input type="file" class="border-primary form-control" id="inputGroupFile02"
-                               aria-describedby="inputGroup-sizing-lg" name="image" required>
-                    </div>
-                </div>
-                <div class="col-6 mb-3">
-                    <label class="font-weight-bold">Price:</label>
+                    <label class="font-weight-bold text-dark">Price:</label>
                     <div class="input-group input-group-lg">
-                        <input type="number" class="border-primary form-control border-right-0"
+                        <input style="color: #1b1b1b" min="1" maxlength='10' type="number" class="border-primary
+                        form-control border-right-0"
                                aria-label="Sizing example input"
                                aria-describedby="inputGroup-sizing-lg" name="price" required>
                         <span class="input-group-text border-primary border-left-0">СЎМ</span>
                     </div>
                 </div>
                 <div class="col-6 mb-3">
-                    <label class="font-weight-bold">Discount:</label>
+                    <label class="font-weight-bold text-dark">Discount:</label>
                     <div class="input-group input-group-lg">
-                        <input type="number" class=" border-primary form-control" value='0'
+                        <input style="color: #1b1b1b" min="0" max="100" maxlength="3" minlength="1"
+                               class=" border-primary form-control border-right-0" value='0'
                                aria-label="Sizing example input"
                                aria-describedby="inputGroup-sizing-lg" name="discount" required>
+                        <span class="input-group-text border-primary border-left-0">%</span>
+                    </div>
+                </div>
+                <div class="col-6 mb-3">
+                    <label class="font-weight-bold text-dark">Image:</label>
+                    <div class="input-group-lg mb-3">
+                        <input style="color: #1b1b1b" type="file" class="form-control border-0" id="inputGroupFile02"
+                               aria-describedby="inputGroup-sizing-lg" name="image" required>
                     </div>
                 </div>
                 <div class="col-12">
-                    <label class="font-weight-bold">Description:</label>
+                    <label class="font-weight-bold text-dark">Description:</label>
                     <div class="input-group input-group-lg">
                         {{ form.description }}
                     </div>
                 </div>
                 <div class="col-12 my-4 d-flex justify-content-end">
-                    <div class="btn-group btn-group" role="group">
-                        <button class="w-100 mr-3 btn btn-primary">Save and another</button>
+                    <div class="btn-group btn-group mr-3" role="group">
+                        <a href="{% url 'menu:list' %}">
+                        <button class="w-100 mr-5 btn btn-primary text-white" type="button">Back</button></a>
+                    </div>
+                    <div class="btn-group btn-group mr-3" role="group"><a href="{% url 'menu:list' %}">
+                        <button class="w-100 mr-3 btn btn-primary" type="button">Product list</button></a>
                     </div>
                     <div class="btn-group btn-group" role="group">
                         <button class="w-100 btn btn-success" type="submit">Save</button>

@@ -12,7 +12,6 @@
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
           rel="stylesheet">
     <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Outfit&family=Roboto&display=swap" rel="stylesheet">
     <style>
         .sidebar .nav-item .nav-link span {
@@ -36,7 +35,7 @@
         <!-- Sidebar - Brand -->
         <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
             <div class="sidebar-brand-icon rotate-n-15">
-                <i class="fas fa-laugh-wink"></i>
+                <i class="fas fa-qrcode"></i>
             </div>
             <div class="sidebar-brand-text mx-3">QrAdmin <sup>2</sup></div>
         </a>
@@ -45,31 +44,29 @@
 
 
         <!-- Nav Item - Dashboard -->
-        <li class="nav-item active">
-            <a class="nav-link" href="/">
-                <i class="fas fa-fw fa-tachometer-alt"></i>
+        {% url 'menu:dashboard' as dashboard %}
+        <li class="nav-item rounded {% if request.path == dashboard %}bg-light{% endif %}">
+            <a class="nav-link {% if request.path == dashboard %}text-dark{% endif %}" href="/">
+                <i class="fas fa-fw fa-tachometer-alt {% if request.path == dashboard %}text-dark{% endif %}"></i>
                 <span>Dashboard</span></a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'menu:category' %}">
-                <i class="fas fa-fw fa-tachometer-alt"></i>
-                <span>Category</span></a>
+        {% url 'menu:category' as categ %}
+        <li class="nav-item rounded {% if request.path == categ %}bg-light{% endif %}">
+            <a class="nav-link {% if request.path == categ %}text-dark{% endif %}" href="{% url 'menu:category' %}">
+                <i class="fas fa-list {% if request.path == categ %}text-dark{% endif %}"></i>
+                <span>Categories</span></a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" href="index.html">
-                <i class="fas fa-fw fa-tachometer-alt"></i>
-                <span>Dashboard</span></a>
+        {% url 'menu:list' as list %}
+        <li class="nav-item rounded {% if request.path == list %}bg-light{% endif %}">
+            <a class="nav-link {% if request.path == list %}text-dark{% endif %}"  href="{{ list }}">
+                <i class="fas fa-clipboard-list {% if request.path == list %}text-dark{% endif %}"></i>
+                <span>Products</span></a>
         </li>
         <!-- Divider -->
 
 
-        <!-- Heading -->
-        <div class="sidebar-heading">
-            Interface
-        </div>
-
         <!-- Nav Item - Pages Collapse Menu -->
-        <li class="nav-item">
+        <li class="nav-item active">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
                aria-expanded="true" aria-controls="collapseTwo">
                 <i class="fas fa-fw fa-cog"></i>

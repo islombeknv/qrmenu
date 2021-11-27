@@ -56,6 +56,7 @@ class MenuModel(models.Model):
     image = models.ImageField(upload_to='menu')
     name = models.CharField(max_length=70)
     price = models.IntegerField(default=0)
+    discount = models.IntegerField(default=0)
     description = RichTextUploadingField()
     created_at = models.DateTimeField(auto_now_add=True)
 

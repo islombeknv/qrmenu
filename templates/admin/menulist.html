@@ -1,0 +1,227 @@
+{% extends 'layouts/base.html' %}
+{% load humanize %}
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{% static 'css/table.css' %}">
+{% endblock %}
+{% block content %}
+    <form method="POST" action="{% url 'menu:product-delete' %}">
+        {% csrf_token %}
+        <!-- Delete Modal HTML -->
+        <div id="deleteEmployeeModal" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Delete Employee</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete these Records?</p>
+                        <p class="text-warning"><small>This action cannot be undone.</small></p>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                        <input type="submit" class="btn btn-danger" value="Delete">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-0 pt-0 h-100" style="position:relative; top: -50px">
+            <div class="table-responsive">
+                <div class="table-wrapper">
+                    <div class="table-title">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h2>Manage <b>Product</b></h2>
+                            </div>
+                            <div class="col-sm-6">
+                                <a href="{% url 'menu:create' %}" class="btn btn-success"><i
+                                        class="material-icons">&#xE147;</i> <span>Add New Product</span></a>
+                                <a href="#deleteEmployeeModal" class="btn btn-danger" data-toggle="modal"><i
+                                        class="material-icons">&#xE15C;</i> <span>Delete</span></a>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="table table-striped table-hover">
+                        <thead>
+                        <tr>
+                            <th>
+							<span class="custom-checkbox">
+								<input type="checkbox" id="selectAll">
+								<label for="selectAll"></label>
+							</span>
+                            </th>
+                            <th>№:</th>
+                            <th>Restaurant</th>
+                            <th>Category</th>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Discount</th>
+                            <th>Created at</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for menu in object_list %}
+                            <tr>
+                                <td>
+							<span class="custom-checkbox">
+								<input type="checkbox" id="checkbox{{ menu.pk }}" name="option" value="{{ menu.pk }}">
+								<label for="checkbox1"></label>
+							</span>
+                                </td>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ menu.restaurant }}</td>
+                                <td class="font-weight-bold">{{ menu.category }}</td>
+                                <td>{{ menu.name }}</td>
+                                <td><b>{{ menu.price|intcomma }}</b> so'm</td>
+                                <td>{{ menu.discount }}%</td>
+                                <td>{{ menu.created_at|date:'d-m-Y, H:m' }}</td>
+
+                                <td>
+                                    <a href="#editEmployeeModal" class="edit" data-toggle="modal"
+                                       onclick="myFunction('{{ menu.name }}', '{{ menu.price }}',
+                                               '{% url 'menu:product-update' pk=menu.pk %}?next={{ request.path }}?{{ request.GET.urlencode }}',
+                                               '{{ menu.discount }}', '{{ menu.image.url }}',
+                                               '{{ menu.description }}'
+                                               )">
+                                        <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
+
+                                    <a onclick="document.getElementById('checkbox{{ menu.pk }}').checked=true"
+                                       href="#deleteEmployeeModal" class="delete" data-toggle="modal">
+                                        <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <td colspan="9" class="text-center">
+                                <button class="btn btn-primary">Back</button>
+                                <h4>Category empty:</h4></td>
+                        {% endfor %}
+
+                        </tbody>
+                    </table>
+                    <div class="clearfix">
+                        <div class="hint-text">Showing <b>{{ page_obj.start_index }}–{{ page_obj.end_index }}</b> out of
+                            <b>{{ page_obj.paginator.count }}</b> entries
+                        </div>
+                        <ul class="pagination">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">previous</a>
+                                </li>
+                            {% endif %}
+                            {% for page in page_obj.paginator.page_range %}
+                                <li class="page-item {% if page == page_obj.number %} active {% endif %}">
+                                    <a href="?page={{ page }}" class="page-link">{{ page }}</a></li>
+                                <li class="page-item">
+                            {% endfor %}
+                            {% if page_obj.has_next %}
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}">next</a>
+                            {% endif %}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <!-- Edit Modal HTML -->
+    <div id="editEmployeeModal" class="modal fade">
+        <div class="modal-dialog" style="max-width: 550px;">
+            <div class="modal-content">
+                <form method="POST" action="" id="myform">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h4 class="modal-title">Edit Category</h4>
+                        <button type="button" class="close" data-dismiss="modal"
+                                aria-hidden="true">&times;
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Restaurant:</label>
+                            <select class="border-primary custom-select custom-select mr-sm-2" name='restaurant'
+                                    style="color: #1b1b1b">
+                                {% if restaurant %}
+                                    {% for res in restaurant %}
+                                        <option {% if forloop.first %}selected{% endif %}
+                                                value="{{ res.pk }}">{{ res.name }}</option>
+                                    {% endfor %}
+                                {% else %}
+                                    <option disabled>No restaurant</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Category:</label>
+                            <select class="border-primary custom-select custom-select mr-sm-2" name='category'
+                                    style="color: #1b1b1b">
+                                {% if category %}
+                                    {% for cat in category %}
+                                        <option {% if forloop.first %}selected{% endif %}
+                                                value="{{ cat.pk }}">{{ cat.title }}</option>
+                                    {% endfor %}
+                                {% else %}
+                                    <option disabled>No category</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Image:</label>
+                            <a href="" id="image"></a>
+                            <input type="file" name="image" accept="image/*" id="id_image"
+                                   class="form-control border-primary rounded">
+                        </div>
+                        <div class="form-group">
+                            <label>Name:</label>
+                            <input id='name' type="text" class="form-control border-primary rounded" required
+                                   name="name">
+                        </div>
+                        <div class="form-group">
+                            <label>Price:</label>
+                            <input id='price' min="1" maxlength='10' type="number" class="border-primary
+                        form-control rounded" name="price" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Discount:</label>
+                            <input id="discount" min="0" max='100' maxlength='3' type="number" class="border-primary
+                        form-control rounded" name="discount" required value="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Description:</label>
+                            <textarea id="description" class="form-control border-primary rounded" required
+                                      name="description"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="button" class="btn btn-default"
+                               data-dismiss="modal" value="Cancel">
+                        <input type="submit" class="btn btn-info" value="Save">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div><!-- end Edit Modal HTML -->
+
+
+
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        function myFunction(name, price, url, discount, image, description) {
+            document.getElementById('name').value = name,
+                document.getElementById('price').value = price,
+                document.getElementById('myform').action = url,
+                document.getElementById('discount').value = discount,
+                document.getElementById('image').href=image,
+                document.getElementById('image').innerText=image,
+                document.getElementById('description').value=description.slice(3, -4)
+        }
+    </script>
+    <script src="{% static 'js/tabel.js' %}"></script>
+{% endblock %}

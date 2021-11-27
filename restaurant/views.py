@@ -1,9 +1,7 @@
-from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
-from django.template.context_processors import request
 from django.urls import reverse
-from django.views.generic import CreateView, DeleteView
+from django.views.generic import CreateView, UpdateView, DetailView
 from restaurant.forms import MenuForm, CategoryForm
 from django.http import Http404, HttpResponseRedirect
 from django.views.generic import TemplateView, ListView
@@ -36,7 +34,6 @@ class MenuCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         form.save()
-        messages.success(self.request, "The menu was added successfully.")
         return redirect(reverse('menu:create'))
 
     def get_context_data(self, **kwargs):
@@ -44,6 +41,43 @@ class MenuCreateView(LoginRequiredMixin, CreateView):
         context['category'] = self.request.user.category.order_by('-pk')
         context['restaurant'] = self.request.user.restaurant.order_by('-pk')
         return context
+
+
+class AdminMenuListView(ListView):
+    template_name = 'admin/menulist.html'
+    paginate_by = 10
+
+    def get_queryset(self):
+        q = self.request.GET.get('q')
+        qs = MenuModel.objects.all()
+        if q:
+            return qs.filter(category_id=q).order_by('-pk')
+        else:
+            return qs.filter(user=self.request.user).order_by('-pk')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['category'] = self.request.user.category.order_by('-pk')
+        context['restaurant'] = self.request.user.restaurant.order_by('-pk')
+        return context
+
+
+def ProductDelete(request):
+    cat = request.POST.getlist('option')
+    for i in cat:
+        MenuModel.objects.get(id=i).delete()
+    return HttpResponseRedirect(reverse('menu:list'))
+
+
+class ProductUpdateView(UpdateView):
+    template_name = 'admin/menulist.html'
+    form_class = MenuForm
+    model = MenuModel
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        form.save()
+        return redirect(self.request.GET.get('next'))
 
 
 class CategoryListView(ListView):
@@ -68,5 +102,15 @@ class CategoryCreateView(CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         form.save()
-        messages.success(self.request, "The category was added successfully.")
+        return redirect(reverse('menu:category'))
+
+
+class CategoryUpdateView(UpdateView):
+    template_name = 'admin/category.html'
+    form_class = CategoryForm
+    model = CategoryModel
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        form.save()
         return redirect(reverse('menu:category'))
