@@ -58,13 +58,18 @@
         </li>
         {% url 'menu:list' as list %}
         <li class="nav-item rounded {% if request.path == list %}bg-light{% endif %}">
-            <a class="nav-link {% if request.path == list %}text-dark{% endif %}"  href="{{ list }}">
+            <a class="nav-link {% if request.path == list %}text-dark{% endif %}" href="{{ list }}">
                 <i class="fas fa-clipboard-list {% if request.path == list %}text-dark{% endif %}"></i>
                 <span>Products</span></a>
         </li>
         <!-- Divider -->
-
-
+        <!-- Nav Item - Tables -->
+        {% url 'menu:table-list' as table %}
+        <li class="nav-item rounded {% if request.path == table %}bg-light{% endif %}">
+            <a class="nav-link {% if request.path == table %}text-dark{% endif %}" href="{{ table }}">
+                <i class="fas fa-fw fa-table {% if request.path == table %}text-dark{% endif %}"></i>
+                <span>Tables</span></a>
+        </li>
         <!-- Nav Item - Pages Collapse Menu -->
         <li class="nav-item active">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
@@ -136,12 +141,6 @@
                 <span>Charts</span></a>
         </li>
 
-        <!-- Nav Item - Tables -->
-        <li class="nav-item">
-            <a class="nav-link" href="tables.html">
-                <i class="fas fa-fw fa-table"></i>
-                <span>Tables</span></a>
-        </li>
 
         <!-- Divider -->
 

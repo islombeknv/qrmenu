@@ -1,0 +1,218 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="{% static 'css/table.css' %}">
+{% endblock %}
+{% block content %}
+    <form method="POST" action="{% url 'menu:table-delete' %}">
+        {% csrf_token %}
+        <!-- Delete Modal HTML -->
+        <div id="deleteEmployeeModal" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Delete Category</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete these Records?</p>
+                        <p class="text-warning"><small>This action cannot be undone.</small></p>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                        <input type="submit" class="btn btn-danger" value="Delete">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-0 pt-0 h-100" style="position:relative; top: -50px">
+            <div class="table-responsive">
+                <div class="table-wrapper">
+                    <div class="table-title">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h2>Manage <b>Table</b></h2>
+                            </div>
+                            <div class="col-sm-6">
+                                <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i
+                                        class="material-icons">&#xE147;</i> <span>Add New Table</span></a>
+                                <a href="#deleteEmployeeModal" class="btn btn-danger" data-toggle="modal"><i
+                                        class="material-icons">&#xE15C;</i> <span>Delete</span></a>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="table table-striped table-hover text-center">
+                        <thead>
+                        <tr>
+                            <th>
+							<span class="custom-checkbox">
+								<input type="checkbox" id="selectAll">
+								<label for="selectAll"></label>
+							</span>
+                            </th>
+                            <th>№:</th>
+                            <th>Restaurant</th>
+                            <th>Table</th>
+                            <th>Qr Code</th>
+                            <th>Created at</th>
+                            <th>Update at</th>
+                            <th class="px-5">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for table in object_list %}
+                            <tr>
+                                <td>
+							<span class="custom-checkbox">
+								<input type="checkbox" id="checkbox{{ table.pk }}" name="option" value="{{ table.pk }}">
+								<label for="checkbox1"></label>
+							</span>
+                                </td>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ table.restaurant }}</td>
+                                <td><b>Table-{{ table.number }}</b></td>
+                                <td class="m-0"><img width="60" src="{{ table.qr_code.url }}"></td>
+                                <td>{{ table.created_at|date:'d-m-Y, H:m' }}</td>
+                                <td>{{ table.updated_at|date:'d-m-Y, H:m' }}</td>
+                                <td class="row">
+                                    <a
+                                            href="#viewEmployeeModal" class="edit col" data-toggle="modal"
+                                            onclick="document.getElementById('qr').src='{{ table.qr_code.url }}'">
+                                        <i class="material-icons text-primary" data-toggle="tooltip" title="View">&#xe8f4;</i>
+                                    </a>
+                                     <a
+                                            href="#viewEmployeeModal" class="edit col w-100" data-toggle="modal"
+                                            onclick="document.getElementById('qr').src='{{ table.qr_code.url }}'">
+                                        <i class="material-icons text-success" data-toggle="tooltip" title="Download">&#xe2c4;</i>
+                                    </a>
+                                    <a href="#editEmployeeModal" class="edit col" data-toggle="modal"
+                                       onclick="myFunction('{{ table.title }}', '{% url 'menu:category-update' pk=table.pk %}' )">
+                                        <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
+                                    </a>
+
+                                    <a onclick="document.getElementById('checkbox{{ table.pk }}').checked=true"
+                                       href="#deleteEmployeeModal" class="delete col" data-toggle="modal">
+                                        <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
+                                    </a>
+                                </td>
+
+                            </tr>
+                        {% endfor %}
+
+                        </tbody>
+                    </table>
+                    <div class="clearfix">
+                        <div class="hint-text">Showing <b>{{ page_obj.start_index }}–{{ page_obj.end_index }}</b> out of
+                            <b>{{ page_obj.paginator.count }}</b> entries
+                        </div>
+                        <ul class="pagination">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">previous</a>
+                                </li>
+                            {% endif %}
+                            {% for page in page_obj.paginator.page_range %}
+                                <li class="page-item {% if page == page_obj.number %} active {% endif %}">
+                                    <a href="?page={{ page }}" class="page-link">{{ page }}</a></li>
+                                <li class="page-item">
+                            {% endfor %}
+                            {% if page_obj.has_next %}
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}">next</a>
+                            {% endif %}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- view Modal HTML -->
+    <div id="viewEmployeeModal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Table Qr code</h4>
+                        <button type="button" class="close" data-dismiss="modal"
+                                aria-hidden="true">&times;
+                        </button>
+                    </div>
+                    <div class="card bg-dark text-white border-0">
+                        <img class="card-img border-0" src="" alt="Card image" id="qr">
+                    </div>
+                    <div class="modal-footer">
+                        <input type="button" class="btn btn-default"
+                               data-dismiss="modal" value="Cancel">
+                        <input type="submit" class="btn btn-info" value="Download">
+                    </div>
+            </div>
+        </div>
+    </div><!-- end view Modal HTML -->
+
+    <!-- Edit Modal HTML -->
+    <div id="editEmployeeModal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="POST" action="" id="myform">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h4 class="modal-title">Edit Category</h4>
+                        <button type="button" class="close" data-dismiss="modal"
+                                aria-hidden="true">&times;
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input type="text" name="title" class="form-control border-primary"
+                                   value="" required id="catupdate">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="button" class="btn btn-default"
+                               data-dismiss="modal" value="Cancel">
+                        <input type="submit" class="btn btn-info" value="Save">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div><!-- end Edit Modal HTML -->
+    <!-- Add Modal HTML -->
+    <div id="addEmployeeModal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="POST" action="{% url 'menu:table-create' %}">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h4 class="modal-title">Add Table</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Number</label>
+                            <input type="text" class="form-control border-primary" required name="number">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                        <input type="submit" class="btn btn-success" value="Add">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        function myFunction(title, url) {
+            document.getElementById('catupdate').value = title,
+                document.getElementById('myform').action = url
+        }
+    </script>
+    <script src="{% static 'js/tabel.js' %}"></script>
+{% endblock %}

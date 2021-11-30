@@ -56,11 +56,11 @@
 							</span>
                             </th>
                             <th>№:</th>
-                            <th>Restaurant</th>
                             <th>Category</th>
                             <th>Product</th>
-                            <th>Price</th>
+                            <th>Real Price</th>
                             <th>Discount</th>
+                            <th>Discount Price</th>
                             <th>Created at</th>
                             <th>Actions</th>
                         </tr>
@@ -75,11 +75,11 @@
 							</span>
                                 </td>
                                 <td>{{ forloop.counter }}</td>
-                                <td>{{ menu.restaurant }}</td>
                                 <td class="font-weight-bold">{{ menu.category }}</td>
-                                <td>{{ menu.name }}</td>
+                                <td>{{ menu.name }}{% if menu.is_new %}<span class="badge badge-success ml-1">New</span>{% endif %}</td>
                                 <td><b>{{ menu.price|intcomma }}</b> so'm</td>
-                                <td>{{ menu.discount }}%</td>
+                                <td>{{ menu.discount }}%{% if menu.is_discount %}<span class="badge badge-primary ml-1">Discount</span>{% endif %}</td>
+                                <td>{% if menu.discount %}<b>{{ menu.get_price|intcomma }}</b> so'm{% else %}0 so'm{% endif %}</td>
                                 <td>{{ menu.created_at|date:'d-m-Y, H:m' }}</td>
 
                                 <td>
@@ -220,7 +220,7 @@
                 document.getElementById('discount').value = discount,
                 document.getElementById('image').href=image,
                 document.getElementById('image').innerText=image,
-                document.getElementById('description').value=description.slice(3, -4)
+                document.getElementById('description').value=description.replace(/(<([^>]+)>)/gi, "");
         }
     </script>
     <script src="{% static 'js/tabel.js' %}"></script>

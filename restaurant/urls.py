@@ -17,4 +17,7 @@ urlpatterns = [
     path('product/update/<int:pk>/', ProductUpdateView.as_view(), name='product-update'),
     re_path(r'^product/delete/?option=\.', ProductDelete, name='product-delete'),
 
+    path('table/list/', TableListView.as_view(), name='table-list'),
+    path('table/create/', TableCreateView.as_view(), name='table-create'),
+    re_path(r'^table/delete/?option=\.', TableDelete, name='table-delete'),
 ]
